@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Editar monitoramento | ChaveRadar{% endblock %}
+{% block page_name %}Monitoramento{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><span class="section-kicker">Instagram</span><h1>Editar {{ item.handle }}</h1><p>Altere o perfil, palavras adicionais, alertas ou pause o monitoramento.</p></div>
+  <a class="btn btn-soft" href="{% url 'monitoring' %}"><i class="bi bi-arrow-left"></i> Voltar</a>
+</div>
+<section class="panel" style="max-width:760px;">
+  <form method="post" class="d-grid gap-3">
+    {% csrf_token %}
+    <div><label class="form-label">Perfil do Instagram</label>{{ form.handle }}{% for error in form.handle.errors %}<div class="form-error">{{ error }}</div>{% endfor %}</div>
+    <div><label class="form-label">Nome / apelido</label>{{ form.display_name }}</div>
+    <div><label class="form-label">Palavras-chave adicionais</label>{{ form.keywords }}<div class="form-help">Separe por virgulas. Em branco usa a lista global.</div></div>
+    <div class="form-check">{{ form.active }} <label class="form-check-label" for="{{ form.active.id_for_label }}">Monitoramento ativo</label></div>
+    <div class="form-check">{{ form.alerts_enabled }} <label class="form-check-label" for="{{ form.alerts_enabled.id_for_label }}">Gerar alertas</label></div>
+    <div><label class="form-label">Observacoes</label>{{ form.notes }}</div>
+    <div class="d-flex gap-2"><button class="btn btn-brand" type="submit"><i class="bi bi-check2"></i> Salvar alteracoes</button><a class="btn btn-soft" href="{% url 'monitoring' %}">Cancelar</a></div>
+  </form>
+</section>
+{% endblock %}

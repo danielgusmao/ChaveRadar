@@ -1,6 +1,6 @@
-# Atualizar o ChaveRadar no Visual Studio - v0.2.4
+# Atualizar o ChaveRadar no Visual Studio - v0.2.5
 
-Esta versao mantem login/cadastro/aprovacao administrativa e adiciona aprovacao em massa na fila de Revisao.
+Esta versao mantem os recursos anteriores e adiciona a tela Monitoramento com cadastro, edicao, exclusao, pausa e configuracao de alertas por perfil do Instagram.
 
 ## Atualizacao local
 
@@ -24,7 +24,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-7. Acesse `http://127.0.0.1:8000/`, entre como administrador e teste **Revisao -> Selecionar todos -> Aprovar selecionados**.
+7. Acesse `http://127.0.0.1:8000/`, entre como administrador e teste **Monitoramento -> adicionar @minhacorretora -> editar -> excluir**. A exclusao nao deve apagar leads historicos.
 
 ## Antes do deploy no Render
 

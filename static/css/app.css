@@ -289,3 +289,18 @@ a { text-decoration: none; }
   .user-menu-button { width: 40px; height: 40px; padding: 5px; justify-content: center; }
   .user-menu-button::after { display: none; }
 }
+
+/* v0.2.5 - perfis monitorados */
+.monitoring-list { display: grid; }
+.monitoring-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 2px; border-bottom: 1px solid #eef1f4; }
+.monitoring-row:last-child { border-bottom: 0; }
+.monitoring-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.monitoring-actions form { margin: 0; }
+.alert-pill { background: #eef7ff; color: #24618a; }
+.min-w-0 { min-width: 0; }
+@media (max-width: 767.98px) {
+  .monitoring-row { align-items: flex-start; flex-direction: column; }
+  .monitoring-actions { width: 100%; }
+  .monitoring-actions > * { flex: 1; }
+  .monitoring-actions .btn { width: 100%; }
+}

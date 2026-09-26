@@ -106,3 +106,48 @@ class CollectionRun(models.Model):
     comments_failed = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=30, default='running')
     error_message = models.TextField(blank=True)
+
+
+class MonitoringProfile(models.Model):
+    STATUS_CHOICES = [
+        ('waiting', 'Aguardando conexao'),
+        ('ok', 'Monitorado'),
+        ('error', 'Erro'),
+    ]
+
+    handle = models.CharField(max_length=150, unique=True)
+    display_name = models.CharField(max_length=255, blank=True)
+    active = models.BooleanField(default=True)
+    alerts_enabled = models.BooleanField(default=True)
+    keywords = models.TextField(
+        blank=True,
+        help_text='Palavras adicionais deste perfil, separadas por virgula. Em branco usa a lista global.',
+    )
+    notes = models.TextField(blank=True)
+    last_checked_at = models.DateTimeField(null=True, blank=True)
+    last_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='waiting')
+    last_error = models.TextField(blank=True)
+    created_by = models.ForeignKey(
+        'auth.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='instagram_monitoring_profiles',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['handle']
+        verbose_name = 'Perfil monitorado do Instagram'
+        verbose_name_plural = 'Perfis monitorados do Instagram'
+
+    def save(self, *args, **kwargs):
+        value = (self.handle or '').strip().lower()
+        if value and not value.startswith('@'):
+            value = '@' + value
+        self.handle = value
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.handle

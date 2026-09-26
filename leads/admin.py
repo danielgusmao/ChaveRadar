@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Classification, CollectionRun, Comment, Profile, Publication
+from .models import Classification, CollectionRun, Comment, MonitoringProfile, Profile, Publication
 
 
 @admin.register(Profile)
@@ -32,3 +32,10 @@ class ClassificationAdmin(admin.ModelAdmin):
 class CollectionRunAdmin(admin.ModelAdmin):
     list_display = ('profile', 'source_type', 'status', 'comments_found', 'comments_new', 'started_at')
     list_filter = ('source_type', 'status')
+
+
+@admin.register(MonitoringProfile)
+class MonitoringProfileAdmin(admin.ModelAdmin):
+    list_display = ('handle', 'display_name', 'active', 'alerts_enabled', 'last_status', 'last_checked_at')
+    search_fields = ('handle', 'display_name', 'keywords', 'notes')
+    list_filter = ('active', 'alerts_enabled', 'last_status')

@@ -1,3 +1,29 @@
+# Atualizacao - 2026-09-26 - v0.2.5 CRUD de perfis monitorados
+
+- Solicitada a possibilidade de editar e excluir contas da lista de perfis monitorados do Instagram.
+- Criado modelo separado `MonitoringProfile` para que a lista de monitoramento nao seja confundida com `Profile`, que guarda a origem historica de publicacoes/comentarios.
+- Nova tela `Monitoramento`: adiciona contas como `@minhacorretora`, permite ativar/pausar, habilitar/desabilitar alertas, informar palavras-chave adicionais e observacoes.
+- Adicionadas acoes **Editar** e **Excluir**. A exclusao remove somente o alvo de monitoramento e preserva publicacoes, comentarios, classificacoes e leads ja existentes.
+- Alteracoes de monitoramento ficam restritas a administradores (`is_staff`); usuarios autenticados podem visualizar a lista.
+- Criada migracao `leads/0002_monitoringprofile.py`; portanto esta versao exige `python manage.py migrate`.
+- Criado `docs/12_MONITORAMENTO_INSTAGRAM.md`.
+- Versao atualizada para **v0.2.5**.
+- A coleta/alerta real ainda depende da conexao com Meta API ou provedor licenciado. Apenas cadastrar um handle nao concede acesso aos comentarios do perfil.
+- Proximo passo: validar a v0.2.5 localmente e publicar; depois criar/configurar o App Meta e implementar o conector + rotina diaria + alertas.
+- Regra permanente mantida: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+
+---
+# Atualizacao - 2026-09-26 - Seguranca do bootstrap do administrador
+
+- Foi revisado o uso das variaveis `CHAVERADAR_ADMIN_USERNAME`, `CHAVERADAR_ADMIN_EMAIL` e `CHAVERADAR_ADMIN_PASSWORD` no Render.
+- Decisao: a senha administrativa em texto puro deve existir no Render apenas durante o bootstrap inicial. Embora variaveis de ambiente sejam o local correto para segredos no Render, manter uma senha humana permanente ali cria exposicao desnecessaria para quem tiver acesso administrativo ao dashboard.
+- Apos o primeiro deploy que criar o superusuario, remover `CHAVERADAR_ADMIN_PASSWORD` e, preferencialmente, tambem `CHAVERADAR_ADMIN_USERNAME` e `CHAVERADAR_ADMIN_EMAIL` do Render.
+- Remover tambem `python manage.py bootstrap_admin` do Build Command apos o bootstrap inicial.
+- A senha do usuario permanece apenas como hash gerenciado pelo Django no PostgreSQL/Supabase.
+- `SECRET_KEY` e `DATABASE_URL` devem continuar como variaveis secretas no Render porque a aplicacao precisa delas em runtime.
+- Nunca registrar senhas reais, `DATABASE_URL` ou `SECRET_KEY` no GitHub, docs ou logs.
+
+---
 # Atualizacao - 2026-09-26 - v0.2.4 aprovacao em massa na Revisao
 
 - Solicitado e implementado fluxo de aprovacao em massa na tela `Revisao`.

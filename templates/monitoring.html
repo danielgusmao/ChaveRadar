@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Monitoramento | ChaveRadar{% endblock %}
+{% block page_name %}Monitoramento{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div>
+    <span class="section-kicker">Instagram</span>
+    <h1>Perfis monitorados</h1>
+    <p>Cadastre as contas que o ChaveRadar devera acompanhar diariamente.</p>
+  </div>
+</div>
+
+<div class="row g-4">
+  {% if request.user.is_staff %}
+  <div class="col-12 col-xl-4">
+    <section class="panel h-100">
+      <div class="panel-heading">
+        <div><span class="section-kicker">Novo alvo</span><h2>Adicionar perfil</h2></div>
+      </div>
+      <form method="post" class="d-grid gap-3">
+        {% csrf_token %}
+        <div>
+          <label class="form-label" for="{{ form.handle.id_for_label }}">Perfil do Instagram</label>
+          {{ form.handle }}
+          {% for error in form.handle.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div>
+          <label class="form-label" for="{{ form.display_name.id_for_label }}">Nome / apelido</label>
+          {{ form.display_name }}
+        </div>
+        <div>
+          <label class="form-label" for="{{ form.keywords.id_for_label }}">Palavras-chave adicionais</label>
+          {{ form.keywords }}
+          <div class="form-help">Em branco, usaremos a lista global do ChaveRadar.</div>
+        </div>
+        <div class="form-check">{{ form.active }} <label class="form-check-label" for="{{ form.active.id_for_label }}">Monitoramento ativo</label></div>
+        <div class="form-check">{{ form.alerts_enabled }} <label class="form-check-label" for="{{ form.alerts_enabled.id_for_label }}">Gerar alertas quando houver comentario relevante</label></div>
+        <div>
+          <label class="form-label" for="{{ form.notes.id_for_label }}">Observacoes</label>
+          {{ form.notes }}
+        </div>
+        <button class="btn btn-brand" type="submit"><i class="bi bi-plus-lg"></i> Adicionar perfil</button>
+      </form>
+    </section>
+  </div>
+  {% endif %}
+
+  <div class="col-12 {% if request.user.is_staff %}col-xl-8{% endif %}">
+    <section class="panel">
+      <div class="panel-heading d-flex align-items-center justify-content-between gap-3">
+        <div><span class="section-kicker">Lista</span><h2>{{ items|length }} perfil{{ items|length|pluralize:"is" }}</h2></div>
+        <span class="status-pill">Coleta real depende da conexao Meta/provedor</span>
+      </div>
+
+      {% if items %}
+      <div class="monitoring-list">
+        {% for item in items %}
+        <article class="monitoring-row">
+          <div class="d-flex align-items-start gap-3 flex-grow-1">
+            <div class="avatar-profile">{{ item.handle|slice:"1:2"|upper }}</div>
+            <div class="flex-grow-1 min-w-0">
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                <strong>{{ item.handle }}</strong>
+                {% if item.active %}<span class="status-pill active">Ativo</span>{% else %}<span class="status-pill">Pausado</span>{% endif %}
+                {% if item.alerts_enabled %}<span class="status-pill alert-pill"><i class="bi bi-bell"></i> Alertas</span>{% endif %}
+              </div>
+              {% if item.display_name %}<div class="cell-muted mb-1">{{ item.display_name }}</div>{% endif %}
+              {% if item.keywords %}<div class="small"><strong>Palavras:</strong> {{ item.keywords }}</div>{% else %}<div class="cell-muted">Usa palavras-chave globais</div>{% endif %}
+              <div class="cell-muted mt-1">Status: {{ item.get_last_status_display }}{% if item.last_checked_at %} · ultima verificacao {{ item.last_checked_at|date:"d/m/Y H:i" }}{% endif %}</div>
+            </div>
+          </div>
+          {% if request.user.is_staff %}
+          <div class="monitoring-actions">
+            <a class="btn btn-soft btn-sm" href="{% url 'monitoring_edit' item.id %}"><i class="bi bi-pencil"></i> Editar</a>
+            <form method="post" action="{% url 'monitoring_delete' item.id %}" onsubmit="return confirm('Remover {{ item.handle }} da lista de monitoramento? O historico de leads nao sera apagado.');">
+              {% csrf_token %}
+              <button class="btn btn-outline-danger btn-sm" type="submit"><i class="bi bi-trash"></i> Excluir</button>
+            </form>
+          </div>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state"><i class="bi bi-radar"></i><h3>Nenhum perfil monitorado</h3><p>Adicione a primeira conta do Instagram, por exemplo @minhacorretora.</p></div>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

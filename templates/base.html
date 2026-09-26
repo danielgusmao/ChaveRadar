@@ -37,6 +37,9 @@
       <a class="nav-item {% if request.resolver_match.url_name == 'profiles' %}active{% endif %}" href="{% url 'profiles' %}">
         <i class="bi bi-instagram"></i><span>Perfis</span>
       </a>
+      <a class="nav-item {% if request.resolver_match.url_name == 'monitoring' or request.resolver_match.url_name == 'monitoring_edit' %}active{% endif %}" href="{% url 'monitoring' %}">
+        <i class="bi bi-radar"></i><span>Monitoramento</span>
+      </a>
       <a class="nav-item {% if request.resolver_match.url_name == 'import_comments' %}active{% endif %}" href="{% url 'import_comments' %}">
         <i class="bi bi-cloud-arrow-up"></i><span>Importar</span>
       </a>
@@ -128,6 +131,7 @@
       <a class="nav-item" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
       <a class="nav-item" href="{% url 'leads' %}"><i class="bi bi-people"></i><span>Leads</span></a>
       <a class="nav-item" href="{% url 'profiles' %}"><i class="bi bi-instagram"></i><span>Perfis</span></a>
+      <a class="nav-item" href="{% url 'monitoring' %}"><i class="bi bi-radar"></i><span>Monitoramento</span></a>
       <a class="nav-item" href="{% url 'import_comments' %}"><i class="bi bi-cloud-arrow-up"></i><span>Importar</span></a>
       <a class="nav-item" href="{% url 'review' %}"><i class="bi bi-check2-square"></i><span>Revisao</span></a>
       {% if request.user.is_staff %}

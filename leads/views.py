@@ -12,8 +12,8 @@ from django.utils import timezone
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
 
-from .forms import ImportCommentsForm
-from .models import Classification, Comment, Profile, Publication
+from .forms import ImportCommentsForm, MonitoringProfileForm
+from .models import Classification, Comment, MonitoringProfile, Profile, Publication
 from .services.qualification import analyze_comment
 
 
@@ -97,6 +97,57 @@ def profiles_list(request):
         ),
     ).order_by('handle')
     return render(request, 'profiles.html', {'profiles_list': profiles})
+
+
+@login_required
+def monitoring_list(request):
+    form = MonitoringProfileForm(request.POST or None)
+
+    if request.method == 'POST':
+        if not request.user.is_staff:
+            messages.error(request, 'Somente administradores podem alterar o monitoramento.')
+            return redirect('monitoring')
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.created_by = request.user
+            item.save()
+            messages.success(request, f'{item.handle} adicionado ao monitoramento.')
+            return redirect('monitoring')
+
+    items = MonitoringProfile.objects.all().order_by('handle')
+    return render(request, 'monitoring.html', {'items': items, 'form': form})
+
+
+@login_required
+def monitoring_edit(request, profile_id):
+    item = get_object_or_404(MonitoringProfile, pk=profile_id)
+    if not request.user.is_staff:
+        messages.error(request, 'Somente administradores podem editar o monitoramento.')
+        return redirect('monitoring')
+
+    form = MonitoringProfileForm(request.POST or None, instance=item)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, f'{item.handle} atualizado.')
+        return redirect('monitoring')
+
+    return render(request, 'monitoring_edit.html', {'item': item, 'form': form})
+
+
+@login_required
+def monitoring_delete(request, profile_id):
+    if request.method != 'POST':
+        return redirect('monitoring')
+    if not request.user.is_staff:
+        messages.error(request, 'Somente administradores podem excluir perfis monitorados.')
+        return redirect('monitoring')
+
+    item = get_object_or_404(MonitoringProfile, pk=profile_id)
+    handle = item.handle
+    item.delete()
+    messages.success(request, f'{handle} removido da lista de monitoramento. O historico de leads permanece intacto.')
+    return redirect('monitoring')
+
 
 
 @login_required
