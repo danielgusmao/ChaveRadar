@@ -1,3 +1,15 @@
+# Atualizacao - 2026-09-26 - Supabase PostgreSQL preparado (v0.2.2)
+
+- Regra permanente: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+- Primeiro deploy do ChaveRadar no Render foi concluido com sucesso e ficou `Live`; URL inicial: `https://chaveradar.onrender.com`.
+- Usuario confirmou que os links/telas publicados estao funcionando.
+- Projeto Supabase `ChaveRadar` criado no plano Free, regiao **South America (Sao Paulo)** e status **Healthy**.
+- Metodo de conexao escolhido no Supabase: **Session pooler**, tipo URI, porta **5432**. A URI completa e a senha NAO devem ser registradas em documentacao ou GitHub.
+- v0.2.2 passa a suportar dois bancos: SQLite local quando `DATABASE_URL` estiver ausente; PostgreSQL/Supabase quando `DATABASE_URL` estiver definida no Render.
+- Dependencias adicionadas: `dj-database-url` e `psycopg[binary]`.
+- Proxima sequencia: atualizar arquivos locais com v0.2.2 -> `pip install -r requirements.txt` -> `python manage.py check` -> commit/push -> adicionar `DATABASE_URL` no Render -> novo deploy -> validar persistencia.
+
+---
 # Atualizacao - 2026-09-26 - Preparacao guiada do primeiro deploy no Render (v0.2.1)
 
 - Regra permanente reafirmada: toda versao entregue do ChaveRadar deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.

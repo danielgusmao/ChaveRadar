@@ -22,3 +22,13 @@ Registro.br -> DNS -> Render -> Django -> PostgreSQL
 ## Segredos
 
 Não versionar tokens de Meta/API. Em produção, usar secrets/variaveis protegidas do provedor. Em ambiente local, usar armazenamento seguro quando iniciarmos as integracoes.
+
+
+## Estado confirmado em 26/09/2026
+
+- Render Web Service publicado com sucesso: `https://chaveradar.onrender.com`.
+- GitHub: `danielgusmao/ChaveRadar`, branch `main`.
+- Banco de producao escolhido: Supabase PostgreSQL.
+- Projeto Supabase em South America (Sao Paulo), plano Free, status Healthy.
+- Conexao de producao: Session pooler, configurada no Render pela variavel secreta `DATABASE_URL`.
+- Nao salvar URI, senha ou credenciais no repositorio.

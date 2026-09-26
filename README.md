@@ -44,3 +44,8 @@ O comando `seed_demo` pode ser executado novamente sem duplicar os registros ja 
 ## Documentacao
 
 Leia primeiro `docs/00_CHECKPOINT.md`. Ele e o ponto oficial de retomada do projeto e deve permanecer cumulativo.
+
+
+## Banco em producao
+
+A v0.2.2 usa SQLite local por padrao e PostgreSQL/Supabase quando a variavel `DATABASE_URL` esta configurada. Credenciais nunca devem ser versionadas.

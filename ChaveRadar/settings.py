@@ -1,9 +1,11 @@
 from pathlib import Path
 import os
 
+import dj_database_url
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Em producao, o Render fornecera SECRET_KEY como variavel de ambiente.
+# Em producao, o Render fornece SECRET_KEY como variavel de ambiente.
 # O valor padrao abaixo existe apenas para desenvolvimento local.
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
@@ -67,17 +69,29 @@ TEMPLATES = [
 WSGI_APPLICATION = "ChaveRadar.wsgi.application"
 ASGI_APPLICATION = "ChaveRadar.asgi.application"
 
-# MVP: SQLite local e no primeiro teste do Render.
-# No Render gratuito, esse banco nao e persistente entre novos deploys.
-DATA_DIR = BASE_DIR / "dados"
-DATA_DIR.mkdir(exist_ok=True)
+# Banco:
+# - localmente, sem DATABASE_URL: SQLite;
+# - no Render, com DATABASE_URL: PostgreSQL do Supabase.
+DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": DATA_DIR / "chaveradar.db",
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=60,
+            ssl_require=True,
+        )
     }
-}
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+else:
+    DATA_DIR = BASE_DIR / "dados"
+    DATA_DIR.mkdir(exist_ok=True)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": DATA_DIR / "chaveradar.db",
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = []
 

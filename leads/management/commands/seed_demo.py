@@ -78,7 +78,7 @@ class Command(BaseCommand):
                 confidence=result.get('confidence'),
                 exclusion_reason=result.get('exclusion_reason', ''),
                 review_status='pending' if result['is_lead'] else 'auto',
-                classifier_version='0.2.0',
+                classifier_version='0.2.2',
             )
             created += 1
 
