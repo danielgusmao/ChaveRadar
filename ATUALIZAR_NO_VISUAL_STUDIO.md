@@ -1,24 +1,24 @@
-# Atualizar no Visual Studio - v0.2.0
+# Atualizar o ChaveRadar no Visual Studio - v0.2.1
 
-## Passos
-
-1. No terminal onde o servidor esta rodando, pressione `Ctrl+C`.
-2. Extraia o conteudo deste ZIP dentro de:
-
-`C:\Users\daniel.gusmao\source\repos\ChaveRadar`
-
-3. Aceite substituir os arquivos com o mesmo nome.
-4. O ZIP nao contem a sua `.sln`, `.pyproj`, `.vs` ou `.venv`.
-5. Volte ao Developer PowerShell e confirme que aparece `(.venv)`.
+1. Pare o servidor local com `Ctrl+C`.
+2. Extraia os arquivos desta versao sobre a raiz do projeto atual:
+   `C:\Users\daniel.gusmao\source\repos\ChaveRadar`
+3. Aceite substituir os arquivos existentes.
+4. Nao apague `.venv`, `.vs`, `.sln` ou arquivos do Git.
+5. No Developer PowerShell, confirme que `(.venv)` esta ativo.
 6. Execute:
 
 ```powershell
 pip install -r requirements.txt
-python manage.py migrate
-python manage.py seed_demo
-python manage.py runserver
+python manage.py check
 ```
 
-7. Abra `http://127.0.0.1:8000/`.
+7. Se `check` terminar sem erros, envie a versao ao GitHub:
 
-Se as novas pastas nao aparecerem no Gerenciador de Solucoes, use **Mostrar Todos os Arquivos** ou recarregue o projeto. Isso nao impede o Django de executar os arquivos existentes no disco.
+```powershell
+git add .
+git commit -m "ChaveRadar v0.2.1 - prepara deploy Render"
+git push
+```
+
+8. Somente depois do push volte ao Render. Nao clicar em Deploy Web Service antes desta etapa.

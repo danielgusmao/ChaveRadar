@@ -1,3 +1,16 @@
+# Atualizacao - 2026-09-26 - Preparacao guiada do primeiro deploy no Render (v0.2.1)
+
+- Regra permanente reafirmada: toda versao entregue do ChaveRadar deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+- Usuario confirmou que esta realizando o primeiro deploy web e pediu fluxo mais lento, uma etapa por vez.
+- GitHub remoto confirmado pelo usuario: `https://github.com/danielgusmao/ChaveRadar.git`, branch `main` criada e primeiro push concluido.
+- `gunicorn` e `whitenoise` ja estavam instalados na `.venv` local.
+- O usuario executou `pip freeze > requirements.txt`; nesta versao o projeto volta a usar um `requirements.txt` curto e controlado para evitar dependencias locais desnecessarias no Render.
+- `settings.py` foi preparado para desenvolvimento local e Render: `SECRET_KEY` e `DEBUG` por variaveis de ambiente, inclusao automatica de `RENDER_EXTERNAL_HOSTNAME` em `ALLOWED_HOSTS`, WhiteNoise para arquivos estaticos e possibilidade futura de `DJANGO_ALLOWED_HOSTS` para dominio proprio.
+- Banco continua SQLite apenas para o primeiro teste de deploy. Como o plano gratuito do Render nao fornece disco persistente, nao considerar SQLite como banco definitivo de producao; PostgreSQL sera a etapa posterior.
+- Estado do Render observado: repositorio `danielgusmao/ChaveRadar`, Python 3, branch `main`, formulario de criacao de Web Service aberto. O usuario NAO deve clicar em `Deploy Web Service` antes de atualizar os arquivos locais, executar `python manage.py check` e realizar novo `git push`.
+- Proxima acao: substituir os arquivos locais pela v0.2.1, validar `python manage.py check`, fazer commit/push e somente entao preencher/revisar os campos do Render em conjunto.
+
+---
 # Atualizacao - 2026-09-26 - MVP visual v0.2.0 pronto para teste
 
 - Criada a primeira versao funcional para teste: **ChaveRadar v0.2.0**.
