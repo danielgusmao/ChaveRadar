@@ -1,6 +1,6 @@
-# Atualizar o ChaveRadar no Visual Studio - v0.2.3
+# Atualizar o ChaveRadar no Visual Studio - v0.2.4
 
-Esta versao adiciona login, cadastro e aprovacao administrativa de novos usuarios.
+Esta versao mantem login/cadastro/aprovacao administrativa e adiciona aprovacao em massa na fila de Revisao.
 
 ## Atualizacao local
 
@@ -24,7 +24,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-7. Acesse `http://127.0.0.1:8000/` e teste login/cadastro/aprovacao.
+7. Acesse `http://127.0.0.1:8000/`, entre como administrador e teste **Revisao -> Selecionar todos -> Aprovar selecionados**.
 
 ## Antes do deploy no Render
 

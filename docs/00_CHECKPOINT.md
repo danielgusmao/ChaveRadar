@@ -1,3 +1,26 @@
+# Atualizacao - 2026-09-26 - v0.2.4 aprovacao em massa na Revisao
+
+- Solicitado e implementado fluxo de aprovacao em massa na tela `Revisao`.
+- Cada card pendente agora possui checkbox de selecao.
+- Adicionado botao `Selecionar todos`, que alterna entre selecionar e limpar todos os leads visiveis na fila.
+- Adicionado contador dinamico de selecionados.
+- Adicionado botao `Aprovar selecionados`, habilitado somente quando houver ao menos um item marcado.
+- Antes da aprovacao em massa, a interface solicita confirmacao com a quantidade de leads selecionados.
+- Novo endpoint POST `revisao/aprovar-selecionados/` aprova apenas classificacoes ainda pendentes e marcadas como lead.
+- A acao individual `Confirmar` e `Nao e lead` continua disponivel em cada card.
+- Versao do pacote atualizada para **v0.2.4**.
+- Regra permanente mantida: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+- Proximo passo: atualizar o projeto local, executar `python manage.py check`, testar a tela Revisao e depois commit/push para deploy automatico no Render.
+
+---
+# Atualizacao - 2026-09-26 - inicio da validacao local da v0.2.3
+
+- Usuario confirmou que deseja prosseguir com a v0.2.3.
+- Proxima sequencia: copiar o pacote sobre o projeto local, executar `pip install -r requirements.txt`, `python manage.py migrate` e `python manage.py check`.
+- Se a validacao passar, criar o primeiro administrador local com `python manage.py createsuperuser` e testar cadastro -> aprovacao -> login.
+- Ainda nao fazer push/deploy antes de validar o fluxo local.
+
+---
 # Atualizacao - 2026-09-26 - v0.2.3 autenticacao e aprovacao administrativa
 
 - Nova decisao: o ChaveRadar passa a exigir **login** para todas as telas operacionais (Dashboard, Leads, Perfis, Importacao, Revisao e Exportacao).

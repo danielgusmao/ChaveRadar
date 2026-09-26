@@ -123,6 +123,34 @@ def review_action(request, classification_id, action):
 
 
 @login_required
+def review_bulk_approve(request):
+    if request.method != 'POST':
+        return redirect('review')
+
+    classification_ids = request.POST.getlist('classification_ids')
+    if not classification_ids:
+        messages.warning(request, 'Selecione pelo menos um lead para aprovar.')
+        return redirect('review')
+
+    queryset = Classification.objects.filter(
+        pk__in=classification_ids,
+        review_status='pending',
+        is_lead=True,
+    )
+    count = queryset.update(
+        review_status='approved',
+        is_lead=True,
+        updated_at=timezone.now(),
+    )
+
+    if count:
+        messages.success(request, f'{count} lead(s) aprovado(s) de uma vez.')
+    else:
+        messages.info(request, 'Nenhum lead pendente foi alterado.')
+    return redirect('review')
+
+
+@login_required
 def import_comments(request):
     form = ImportCommentsForm(request.POST or None, request.FILES or None)
     summary = None

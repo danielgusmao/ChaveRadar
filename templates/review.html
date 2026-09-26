@@ -2,15 +2,96 @@
 {% block title %}Revisao | ChaveRadar{% endblock %}
 {% block page_name %}Revisao{% endblock %}
 {% block content %}
-<div class="page-heading"><div><span class="section-kicker">Validacao humana</span><h1>Fila de revisao</h1><p>{{ total }} lead{{ total|pluralize }} aguardando validacao.</p></div></div>
+<div class="page-heading">
+  <div>
+    <span class="section-kicker">Validacao humana</span>
+    <h1>Fila de revisao</h1>
+    <p>{{ total }} lead{{ total|pluralize }} aguardando validacao.</p>
+  </div>
+</div>
+
+{% if items %}
+<section class="panel mb-3">
+  <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn btn-outline-secondary" type="button" id="selectAllBtn">
+        <i class="bi bi-check2-square"></i> Selecionar todos
+      </button>
+      <span class="cell-muted" id="selectedCount">0 selecionados</span>
+    </div>
+    <form id="bulkApproveForm" method="post" action="{% url 'review_bulk_approve' %}" onsubmit="return confirmBulkApproval();">
+      {% csrf_token %}
+      <button class="btn btn-brand" type="submit" id="bulkApproveBtn" disabled>
+        <i class="bi bi-check2-all"></i> Aprovar selecionados
+      </button>
+    </form>
+  </div>
+</section>
+{% endif %}
+
 <div class="review-stack">
 {% for item in items %}
   <article class="review-card">
-    <div class="review-top"><div><div class="fw-semibold">{% if item.comment.display_name and item.comment.display_name != item.comment.username %}{{ item.comment.display_name }} <span class="cell-muted">{{ item.comment.username }}</span>{% else %}{{ item.comment.username }}{% endif %}</div><div class="cell-muted">{{ item.comment.publication.profile.handle }} · {{ item.comment.publication.property_type }}{% if item.comment.publication.property_region %} · {{ item.comment.publication.property_region }}{% endif %}</div></div><span class="badge-level {{ item.qualification }}">{{ item.get_qualification_display }}</span></div>
+    <div class="review-top">
+      <div class="d-flex gap-3 align-items-start">
+        <div class="form-check mt-1">
+          <input class="form-check-input lead-selector" type="checkbox" name="classification_ids" value="{{ item.id }}" form="bulkApproveForm" aria-label="Selecionar {{ item.comment.username }}">
+        </div>
+        <div>
+          <div class="fw-semibold">{% if item.comment.display_name and item.comment.display_name != item.comment.username %}{{ item.comment.display_name }} <span class="cell-muted">{{ item.comment.username }}</span>{% else %}{{ item.comment.username }}{% endif %}</div>
+          <div class="cell-muted">{{ item.comment.publication.profile.handle }} · {{ item.comment.publication.property_type }}{% if item.comment.publication.property_region %} · {{ item.comment.publication.property_region }}{% endif %}</div>
+        </div>
+      </div>
+      <span class="badge-level {{ item.qualification }}">{{ item.get_qualification_display }}</span>
+    </div>
     <blockquote>“{{ item.comment.text_original }}”</blockquote>
     <div class="intent-chips">{% for intent in item.intents %}<span>{{ intent }}</span>{% endfor %}</div>
-    <div class="review-actions"><span class="cell-muted">Confianca: {% if item.confidence %}{{ item.confidence|floatformat:2 }}{% else %}—{% endif %}</span><div class="d-flex gap-2"><form method="post" action="{% url 'review_action' item.id 'reject' %}">{% csrf_token %}<button class="btn btn-outline-secondary" type="submit">Nao e lead</button></form><form method="post" action="{% url 'review_action' item.id 'approve' %}">{% csrf_token %}<button class="btn btn-brand" type="submit"><i class="bi bi-check2"></i> Confirmar</button></form></div></div>
+    <div class="review-actions">
+      <span class="cell-muted">Confianca: {% if item.confidence %}{{ item.confidence|floatformat:2 }}{% else %}—{% endif %}</span>
+      <div class="d-flex gap-2">
+        <form method="post" action="{% url 'review_action' item.id 'reject' %}">{% csrf_token %}<button class="btn btn-outline-secondary" type="submit">Nao e lead</button></form>
+        <form method="post" action="{% url 'review_action' item.id 'approve' %}">{% csrf_token %}<button class="btn btn-brand" type="submit"><i class="bi bi-check2"></i> Confirmar</button></form>
+      </div>
+    </div>
   </article>
-{% empty %}<section class="panel"><div class="empty-state"><i class="bi bi-check2-circle"></i><h3>Fila limpa</h3><p>Nao ha leads pendentes de revisao.</p></div></section>{% endfor %}
+{% empty %}
+  <section class="panel"><div class="empty-state"><i class="bi bi-check2-circle"></i><h3>Fila limpa</h3><p>Nao ha leads pendentes de revisao.</p></div></section>
+{% endfor %}
 </div>
+
+{% if items %}
+<script>
+(function () {
+  const boxes = Array.from(document.querySelectorAll('.lead-selector'));
+  const selectAllBtn = document.getElementById('selectAllBtn');
+  const bulkApproveBtn = document.getElementById('bulkApproveBtn');
+  const selectedCount = document.getElementById('selectedCount');
+
+  function updateState() {
+    const selected = boxes.filter(box => box.checked).length;
+    selectedCount.textContent = `${selected} selecionado${selected === 1 ? '' : 's'}`;
+    bulkApproveBtn.disabled = selected === 0;
+    const allSelected = boxes.length > 0 && selected === boxes.length;
+    selectAllBtn.innerHTML = allSelected
+      ? '<i class="bi bi-square"></i> Limpar selecao'
+      : '<i class="bi bi-check2-square"></i> Selecionar todos';
+  }
+
+  selectAllBtn.addEventListener('click', function () {
+    const allSelected = boxes.every(box => box.checked);
+    boxes.forEach(box => { box.checked = !allSelected; });
+    updateState();
+  });
+
+  boxes.forEach(box => box.addEventListener('change', updateState));
+  updateState();
+})();
+
+function confirmBulkApproval() {
+  const selected = document.querySelectorAll('.lead-selector:checked').length;
+  if (!selected) return false;
+  return window.confirm(`Aprovar ${selected} lead${selected === 1 ? '' : 's'} de uma vez?`);
+}
+</script>
+{% endif %}
 {% endblock %}

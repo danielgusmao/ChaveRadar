@@ -28,3 +28,5 @@
 3. Evoluir autenticacao para papeis/permissoes granulares, recuperacao de senha e auditoria completa.
 4. Integracao CRM.
 5. PWA completa e, se necessário, app Android nativo.
+
+12. Aprovacao em massa na fila de revisao com selecao multipla. **Implementado na v0.2.4.**
