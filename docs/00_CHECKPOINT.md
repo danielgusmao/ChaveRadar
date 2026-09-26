@@ -1,3 +1,18 @@
+# Atualizacao - 2026-09-26 - v0.2.6 edicao e exclusao na tela Perfis
+
+- Usuario solicitou editar e remover os perfis exibidos em **Perfis**, como `@demo_imobiliaria` e `@imobiliaria_exemplo`.
+- A tela `Perfis` agora exibe botoes **Editar** e **Excluir** para administradores (`is_staff`).
+- A edicao permite alterar handle, nome de exibicao, origem dos dados e status ativo/pausado sem perder os dados relacionados.
+- A exclusao de um `Profile` e intencionalmente destrutiva: remove tambem as publicacoes, comentarios e classificacoes/leads associados por cascata.
+- Antes de excluir, a interface mostra confirmacao explicita informando que a acao nao pode ser desfeita.
+- Ao concluir a exclusao, a interface informa quantas publicacoes, comentarios e leads foram removidos.
+- Esta acao e diferente da exclusao em `Monitoramento`: remover um alvo de monitoramento preserva o historico; excluir um perfil em `Perfis` apaga o historico daquele perfil.
+- Nenhuma migracao de banco foi necessaria nesta versao.
+- Versao atualizada para **v0.2.6**.
+- Validacao sintatica (`compileall`) concluida. `python manage.py check` nao foi executado no ambiente de empacotamento porque Django nao esta instalado nele; validar na `.venv` local antes do push.
+- Regra permanente mantida: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+
+---
 # Atualizacao - 2026-09-26 - v0.2.5 CRUD de perfis monitorados
 
 - Solicitada a possibilidade de editar e excluir contas da lista de perfis monitorados do Instagram.

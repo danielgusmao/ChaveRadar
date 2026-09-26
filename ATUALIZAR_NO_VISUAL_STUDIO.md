@@ -1,6 +1,6 @@
-# Atualizar o ChaveRadar no Visual Studio - v0.2.5
+# Atualizar o ChaveRadar no Visual Studio - v0.2.6
 
-Esta versao mantem os recursos anteriores e adiciona a tela Monitoramento com cadastro, edicao, exclusao, pausa e configuracao de alertas por perfil do Instagram.
+Esta versao mantem os recursos anteriores e adiciona edicao e exclusao administrativa diretamente na tela Perfis. Excluir um perfil em Perfis remove tambem publicacoes, comentarios e leads associados; a tela pede confirmacao antes da acao.
 
 ## Atualizacao local
 
@@ -13,7 +13,6 @@ Esta versao mantem os recursos anteriores e adiciona a tela Monitoramento com ca
 
 ```powershell
 pip install -r requirements.txt
-python manage.py migrate
 python manage.py check
 ```
 
@@ -24,7 +23,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-7. Acesse `http://127.0.0.1:8000/`, entre como administrador e teste **Monitoramento -> adicionar @minhacorretora -> editar -> excluir**. A exclusao nao deve apagar leads historicos.
+7. Acesse `http://127.0.0.1:8000/`, entre como administrador e teste **Perfis -> Editar** e **Perfis -> Excluir**. Use um perfil de teste: a exclusao em Perfis apaga os dados associados.
 
 ## Antes do deploy no Render
 

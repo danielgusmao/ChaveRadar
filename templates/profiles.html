@@ -7,8 +7,24 @@
 {% for p in profiles_list %}
   <div class="col-12 col-md-6 col-xl-4">
     <article class="profile-card h-100">
-      <div class="d-flex align-items-start gap-3"><div class="avatar-profile">{{ p.handle|slice:"1:2"|upper }}</div><div class="flex-grow-1"><h2>{{ p.handle }}</h2><div class="cell-muted">{{ p.get_source_type_display }}</div></div><span class="status-pill {% if p.active %}active{% endif %}">{% if p.active %}Ativo{% else %}Pausado{% endif %}</span></div>
+      <div class="d-flex align-items-start gap-3">
+        <div class="avatar-profile">{{ p.handle|slice:"1:2"|upper }}</div>
+        <div class="flex-grow-1"><h2>{{ p.handle }}</h2><div class="cell-muted">{{ p.get_source_type_display }}</div></div>
+        <span class="status-pill {% if p.active %}active{% endif %}">{% if p.active %}Ativo{% else %}Pausado{% endif %}</span>
+      </div>
       <div class="profile-stats"><div><strong>{{ p.publication_count }}</strong><span>Publicacoes</span></div><div><strong>{{ p.comment_count }}</strong><span>Comentarios</span></div><div><strong>{{ p.lead_count }}</strong><span>Leads</span></div></div>
+
+      {% if request.user.is_staff %}
+      <div class="d-flex gap-2 mt-3 pt-3 border-top">
+        <a href="{% url 'profile_edit' p.id %}" class="btn btn-sm btn-outline-secondary flex-grow-1">
+          <i class="bi bi-pencil me-1"></i>Editar
+        </a>
+        <form method="post" action="{% url 'profile_delete' p.id %}" class="flex-grow-1" onsubmit="return confirm('Excluir {{ p.handle|escapejs }}? As publicacoes, comentarios e leads associados a este perfil tambem serao apagados. Esta acao nao pode ser desfeita.');">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger w-100"><i class="bi bi-trash me-1"></i>Excluir</button>
+        </form>
+      </div>
+      {% endif %}
     </article>
   </div>
 {% empty %}

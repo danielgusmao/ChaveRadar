@@ -12,7 +12,7 @@ from django.utils import timezone
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
 
-from .forms import ImportCommentsForm, MonitoringProfileForm
+from .forms import ImportCommentsForm, MonitoringProfileForm, ProfileForm
 from .models import Classification, Comment, MonitoringProfile, Profile, Publication
 from .services.qualification import analyze_comment
 
@@ -97,6 +97,43 @@ def profiles_list(request):
         ),
     ).order_by('handle')
     return render(request, 'profiles.html', {'profiles_list': profiles})
+
+
+@login_required
+def profile_edit(request, profile_id):
+    item = get_object_or_404(Profile, pk=profile_id)
+    if not request.user.is_staff:
+        messages.error(request, 'Somente administradores podem editar perfis.')
+        return redirect('profiles')
+
+    form = ProfileForm(request.POST or None, instance=item)
+    if request.method == 'POST' and form.is_valid():
+        updated = form.save()
+        messages.success(request, f'{updated.handle} atualizado.')
+        return redirect('profiles')
+
+    return render(request, 'profile_edit.html', {'item': item, 'form': form})
+
+
+@login_required
+def profile_delete(request, profile_id):
+    if request.method != 'POST':
+        return redirect('profiles')
+    if not request.user.is_staff:
+        messages.error(request, 'Somente administradores podem excluir perfis.')
+        return redirect('profiles')
+
+    item = get_object_or_404(Profile, pk=profile_id)
+    handle = item.handle
+    publications = item.publications.count()
+    comments = Comment.objects.filter(publication__profile=item).count()
+    leads = Classification.objects.filter(comment__publication__profile=item, is_lead=True).count()
+    item.delete()
+    messages.success(
+        request,
+        f'{handle} excluido: {publications} publicacao(oes), {comments} comentario(s) e {leads} lead(s) associados foram removidos.',
+    )
+    return redirect('profiles')
 
 
 @login_required

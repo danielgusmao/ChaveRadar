@@ -29,3 +29,8 @@ Essa separacao e intencional para evitar perda de historico por uma simples alte
 ## Limitacao atual
 
 Cadastrar `@perfil` na lista nao concede acesso automatico aos comentarios dessa conta. A coleta real dependera de uma fonte permitida: API oficial Meta quando aplicavel ou provedor licenciado. O sistema nao deve usar scraping nao autorizado.
+## Diferenca entre Perfis e Monitoramento
+
+- **Perfis** representa a origem historica dos dados ja coletados/importados. Editar preserva o historico; excluir e destrutivo e remove publicacoes, comentarios e leads associados.
+- **Monitoramento** representa apenas a lista de contas que o ChaveRadar deve tentar acompanhar. Excluir daqui nao remove o historico coletado.
+

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Editar perfil | ChaveRadar{% endblock %}
+{% block page_name %}Editar perfil{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div>
+    <span class="section-kicker">Fontes de dados</span>
+    <h1>Editar {{ item.handle }}</h1>
+    <p>Altere os dados do perfil sem perder publicacoes, comentarios ou leads associados.</p>
+  </div>
+</div>
+
+<section class="panel" style="max-width:760px;">
+  <form method="post" class="d-grid gap-3">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+    <div>
+      <label class="form-label" for="{{ form.handle.id_for_label }}">{{ form.handle.label }}</label>
+      {{ form.handle }}
+      {% for error in form.handle.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+    </div>
+
+    <div>
+      <label class="form-label" for="{{ form.display_name.id_for_label }}">{{ form.display_name.label }}</label>
+      {{ form.display_name }}
+      {% for error in form.display_name.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+    </div>
+
+    <div>
+      <label class="form-label" for="{{ form.source_type.id_for_label }}">{{ form.source_type.label }}</label>
+      {{ form.source_type }}
+      {% for error in form.source_type.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+    </div>
+
+    <div class="form-check">
+      {{ form.active }}
+      <label class="form-check-label" for="{{ form.active.id_for_label }}">{{ form.active.label }}</label>
+    </div>
+
+    <div class="d-flex gap-2 mt-2">
+      <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Salvar</button>
+      <a href="{% url 'profiles' %}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

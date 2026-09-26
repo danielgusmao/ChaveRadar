@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import MonitoringProfile
+from .models import MonitoringProfile, Profile
 
 
 class ImportCommentsForm(forms.Form):
@@ -9,6 +9,34 @@ class ImportCommentsForm(forms.Form):
         help_text='Aceita CSV separado por ponto e virgula ou virgula. Use o modelo incluido no projeto.',
         widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': '.csv,text/csv'}),
     )
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['handle', 'display_name', 'source_type', 'active']
+        labels = {
+            'handle': 'Perfil / @Instagram',
+            'display_name': 'Nome de exibicao',
+            'source_type': 'Origem dos dados',
+            'active': 'Perfil ativo',
+        }
+        widgets = {
+            'handle': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '@imobiliaria'}),
+            'display_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome opcional'}),
+            'source_type': forms.Select(attrs={'class': 'form-select'}),
+            'active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+    def clean_handle(self):
+        value = (self.cleaned_data.get('handle') or '').strip().lower()
+        if not value:
+            raise forms.ValidationError('Informe o perfil.')
+        if not value.startswith('@'):
+            value = '@' + value
+        if ' ' in value:
+            raise forms.ValidationError('O perfil nao pode conter espacos.')
+        return value
 
 
 class MonitoringProfileForm(forms.ModelForm):

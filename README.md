@@ -1,4 +1,4 @@
-# ChaveRadar v0.2.5
+# ChaveRadar v0.2.6
 
 MVP web responsivo para organizar comentarios publicos de perfis imobiliarios, identificar sinais de intencao comercial e apresentar leads por nivel de qualificacao.
 
@@ -6,7 +6,7 @@ MVP web responsivo para organizar comentarios publicos de perfis imobiliarios, i
 
 - Dashboard responsivo para computador e celular.
 - Lista consolidada de leads com filtros.
-- Tela de perfis de origem dos dados.
+- Tela de perfis de origem dos dados com edicao e exclusao administrativa.
 - Tela de Monitoramento com cadastro, edicao e exclusao segura de contas do Instagram.
 - Ativar/pausar monitoramento e alertas por perfil; palavras-chave adicionais por conta.
 - Importacao de CSV.
@@ -51,7 +51,7 @@ A pagina inicial redireciona para `/entrar/` quando nao houver sessao autenticad
 
 ## Primeiro administrador no Render
 
-Como o plano gratuito pode nao oferecer Shell, a v0.2.5 inclui:
+Como o plano gratuito pode nao oferecer Shell, a v0.2.6 inclui:
 
 ```text
 python manage.py bootstrap_admin
