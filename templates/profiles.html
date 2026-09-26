@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Perfis | ChaveRadar{% endblock %}
+{% block page_name %}Perfis{% endblock %}
+{% block content %}
+<div class="page-heading"><div><span class="section-kicker">Fontes de dados</span><h1>Perfis monitorados</h1><p>Veja a cobertura e a origem de coleta de cada perfil.</p></div></div>
+<div class="row g-4">
+{% for p in profiles_list %}
+  <div class="col-12 col-md-6 col-xl-4">
+    <article class="profile-card h-100">
+      <div class="d-flex align-items-start gap-3"><div class="avatar-profile">{{ p.handle|slice:"1:2"|upper }}</div><div class="flex-grow-1"><h2>{{ p.handle }}</h2><div class="cell-muted">{{ p.get_source_type_display }}</div></div><span class="status-pill {% if p.active %}active{% endif %}">{% if p.active %}Ativo{% else %}Pausado{% endif %}</span></div>
+      <div class="profile-stats"><div><strong>{{ p.publication_count }}</strong><span>Publicacoes</span></div><div><strong>{{ p.comment_count }}</strong><span>Comentarios</span></div><div><strong>{{ p.lead_count }}</strong><span>Leads</span></div></div>
+    </article>
+  </div>
+{% empty %}
+  <div class="col-12"><section class="panel"><div class="empty-state"><i class="bi bi-instagram"></i><h3>Nenhum perfil ainda</h3><p>Use a importacao para criar o primeiro perfil automaticamente.</p></div></section></div>
+{% endfor %}
+</div>
+{% endblock %}

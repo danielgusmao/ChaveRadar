@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | ChaveRadar{% endblock %}
+{% block page_name %}Dashboard{% endblock %}
+{% block content %}
+<section class="hero-row">
+  <div>
+    <h1>Oportunidades em um unico radar.</h1>
+    <p>Comentarios publicos organizados por intencao comercial, contexto do imovel e prioridade.</p>
+  </div>
+  <div class="hero-status"><span class="status-dot"></span> Ambiente local ativo</div>
+</section>
+
+<div class="metric-grid">
+  <article class="metric-card">
+    <div class="metric-icon"><i class="bi bi-instagram"></i></div>
+    <div><span class="metric-label">Perfis ativos</span><strong>{{ profiles }}</strong></div>
+  </article>
+  <article class="metric-card">
+    <div class="metric-icon"><i class="bi bi-images"></i></div>
+    <div><span class="metric-label">Publicacoes</span><strong>{{ publications }}</strong></div>
+  </article>
+  <article class="metric-card">
+    <div class="metric-icon"><i class="bi bi-chat-left-text"></i></div>
+    <div><span class="metric-label">Comentarios</span><strong>{{ comments }}</strong></div>
+  </article>
+  <article class="metric-card highlight">
+    <div class="metric-icon"><i class="bi bi-bullseye"></i></div>
+    <div><span class="metric-label">Leads</span><strong>{{ leads }}</strong></div>
+  </article>
+</div>
+
+<div class="row g-4 mt-1">
+  <div class="col-12 col-xl-8">
+    <section class="panel h-100">
+      <div class="panel-header">
+        <div><span class="section-kicker">Mais recentes</span><h2>Leads identificados</h2></div>
+        <a href="{% url 'leads' %}" class="text-link">Ver todos <i class="bi bi-arrow-right"></i></a>
+      </div>
+      {% if recent_leads %}
+      <div class="table-responsive">
+        <table class="table app-table align-middle mb-0">
+          <thead><tr><th>Contato</th><th>Interesse</th><th>Origem</th><th>Nivel</th></tr></thead>
+          <tbody>
+          {% for item in recent_leads %}
+            <tr>
+              <td><div class="fw-semibold">{{ item.comment.display_name|default:item.comment.username }}</div><div class="cell-muted">{{ item.comment.username }}</div></td>
+              <td><div class="text-truncate table-comment">{{ item.comment.text_original }}</div><div class="cell-muted">{{ item.comment.publication.property_type }}{% if item.comment.publication.property_region %} · {{ item.comment.publication.property_region }}{% endif %}</div></td>
+              <td>{{ item.comment.publication.profile.handle }}</td>
+              <td><span class="badge-level {{ item.qualification }}">{{ item.get_qualification_display }}</span></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div class="empty-state"><i class="bi bi-radar"></i><h3>Radar pronto</h3><p>Importe comentarios ou carregue os dados de demonstracao para testar.</p></div>
+      {% endif %}
+    </section>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <section class="panel mb-4">
+      <div class="panel-header"><div><span class="section-kicker">Qualificacao</span><h2>Prioridade</h2></div></div>
+      <div class="priority-list">
+        <div class="priority-row"><span><i class="priority-dot high"></i> Alto</span><strong>{{ high }}</strong></div>
+        <div class="priority-row"><span><i class="priority-dot medium"></i> Medio</span><strong>{{ medium }}</strong></div>
+        <div class="priority-row"><span><i class="priority-dot low"></i> Baixo</span><strong>{{ low }}</strong></div>
+        <div class="priority-row border-0"><span><i class="bi bi-clock-history me-2"></i> Em revisao</span><strong>{{ pending }}</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header"><div><span class="section-kicker">Cobertura</span><h2>Perfis monitorados</h2></div></div>
+      {% for profile in profile_summary %}
+        <div class="profile-line">
+          <div class="avatar-mini">{{ profile.handle|slice:"1:2"|upper }}</div>
+          <div class="flex-grow-1"><div class="fw-semibold">{{ profile.handle }}</div><div class="cell-muted">{{ profile.comment_count }} comentarios</div></div>
+          <strong>{{ profile.lead_count }}</strong>
+        </div>
+      {% empty %}
+        <p class="cell-muted mb-0">Nenhum perfil carregado.</p>
+      {% endfor %}
+    </section>
+  </div>
+</div>
+{% endblock %}

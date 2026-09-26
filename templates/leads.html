@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Leads | ChaveRadar{% endblock %}
+{% block page_name %}Leads{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><span class="section-kicker">Base consolidada</span><h1>Leads identificados</h1><p>{{ total }} registro{{ total|pluralize }} no filtro atual.</p></div>
+</div>
+
+<section class="panel mb-4">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-12 col-lg-5"><label class="form-label">Pesquisar</label><input class="form-control" type="search" name="q" value="{{ search }}" placeholder="Usuario, comentario, imovel ou regiao"></div>
+    <div class="col-6 col-lg-3"><label class="form-label">Nivel</label><select class="form-select" name="nivel"><option value="">Todos</option><option value="high" {% if selected_level == 'high' %}selected{% endif %}>Alto</option><option value="medium" {% if selected_level == 'medium' %}selected{% endif %}>Medio</option><option value="low" {% if selected_level == 'low' %}selected{% endif %}>Baixo</option></select></div>
+    <div class="col-6 col-lg-3"><label class="form-label">Perfil origem</label><select class="form-select" name="perfil"><option value="">Todos</option>{% for p in profiles_filter %}<option value="{{ p.handle }}" {% if selected_profile == p.handle %}selected{% endif %}>{{ p.handle }}</option>{% endfor %}</select></div>
+    <div class="col-12 col-lg-1"><button class="btn btn-brand w-100" type="submit"><i class="bi bi-search"></i></button></div>
+  </form>
+</section>
+
+<section class="panel p-0 overflow-hidden">
+  <div class="table-responsive">
+    <table class="table app-table lead-table align-middle mb-0">
+      <thead><tr><th>Usuario</th><th>Comentario original</th><th>Imovel / Regiao</th><th>Origem</th><th>Data</th><th>Nivel</th></tr></thead>
+      <tbody>
+      {% for item in items %}
+        <tr>
+          <td><a class="user-link" href="https://www.instagram.com/{{ item.comment.username|cut:'@' }}/" target="_blank" rel="noopener">{{ item.comment.display_name|default:item.comment.username }}</a><div class="cell-muted">{{ item.comment.username }}</div></td>
+          <td><div class="comment-text">“{{ item.comment.text_original }}”</div><a class="cell-link" href="{{ item.comment.publication.permalink }}" target="_blank" rel="noopener">Abrir publicacao <i class="bi bi-box-arrow-up-right"></i></a></td>
+          <td><div class="fw-semibold">{{ item.comment.publication.property_type|default:"Imovel anunciado" }}</div><div class="cell-muted">{{ item.comment.publication.property_region|default:"Regiao nao informada" }}</div></td>
+          <td>{{ item.comment.publication.profile.handle }}</td>
+          <td>{{ item.comment.displayed_date_original|default:"—" }}</td>
+          <td><span class="badge-level {{ item.qualification }}">{{ item.get_qualification_display }}</span></td>
+        </tr>
+      {% empty %}<tr><td colspan="6"><div class="empty-state compact"><i class="bi bi-search"></i><h3>Nenhum lead neste filtro</h3></div></td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
