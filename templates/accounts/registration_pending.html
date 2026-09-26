@@ -1,0 +1,18 @@
+{% extends 'accounts/auth_base.html' %}
+{% block title %}Cadastro enviado | ChaveRadar{% endblock %}
+{% block auth_content %}
+<div class="auth-result-icon"><i class="bi bi-hourglass-split"></i></div>
+<div class="auth-heading text-center">
+  <span class="section-kicker">Solicitacao recebida</span>
+  <h2>Cadastro aguardando aprovacao</h2>
+  <p>
+    Seu acesso foi criado, mas ainda esta bloqueado ate um administrador do ChaveRadar aprovar a solicitacao.
+    {% if email %}<br><span class="text-muted">E-mail: {{ email }}</span>{% endif %}
+  </p>
+</div>
+<div class="approval-note justify-content-center text-start">
+  <i class="bi bi-info-circle"></i>
+  <div><strong>Nenhuma acao adicional agora</strong><span>Depois da aprovacao, voce podera entrar normalmente com o usuario e a senha cadastrados.</span></div>
+</div>
+<a class="btn btn-brand w-100 auth-submit" href="{% url 'login' %}">Voltar para o login</a>
+{% endblock %}

@@ -1,28 +1,31 @@
-# Atualizar o ChaveRadar no Visual Studio - v0.2.2
+# Atualizar o ChaveRadar no Visual Studio - v0.2.3
 
-Esta versao adiciona suporte ao PostgreSQL do Supabase sem retirar o SQLite local.
+Esta versao adiciona login, cadastro e aprovacao administrativa de novos usuarios.
 
-1. Pare o servidor local com `Ctrl+C`.
-2. Extraia esta versao sobre a raiz do projeto atual:
+## Atualizacao local
+
+1. Pare o servidor com `Ctrl+C`.
+2. Extraia o pacote sobre:
    `C:\Users\daniel.gusmao\source\repos\ChaveRadar`
-3. Aceite substituir os arquivos existentes.
+3. Aceite substituir os arquivos.
 4. Nao apague `.venv`, `.vs`, `.sln` ou `.git`.
-5. No Developer PowerShell, confirme que `(.venv)` esta ativo.
-6. Execute somente:
+5. No Developer PowerShell, com `(.venv)` ativo, execute:
 
 ```powershell
 pip install -r requirements.txt
+python manage.py migrate
 python manage.py check
 ```
 
-7. Se o check terminar sem erros:
+6. Para testar localmente antes do Render, crie um administrador:
 
 ```powershell
-git add .
-git commit -m "ChaveRadar v0.2.2 - adiciona PostgreSQL Supabase"
-git push
+python manage.py createsuperuser
+python manage.py runserver
 ```
 
-8. No Render, adicionar `DATABASE_URL` com a URI do **Session pooler** do Supabase. Nunca versionar essa URI.
-9. O Render fara novo deploy a partir do push. Se o auto-deploy nao iniciar, usar `Manual Deploy -> Deploy latest commit`.
-10. Depois do deploy, validar Dashboard, Leads, Perfis, Importacao e Revisao.
+7. Acesse `http://127.0.0.1:8000/` e teste login/cadastro/aprovacao.
+
+## Antes do deploy no Render
+
+Nao faca o push antes de configurar o primeiro administrador no Render conforme `docs/11_AUTENTICACAO_APROVACAO.md`.

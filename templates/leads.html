@@ -22,7 +22,7 @@
       <tbody>
       {% for item in items %}
         <tr>
-          <td><a class="user-link" href="https://www.instagram.com/{{ item.comment.username|cut:'@' }}/" target="_blank" rel="noopener">{{ item.comment.display_name|default:item.comment.username }}</a><div class="cell-muted">{{ item.comment.username }}</div></td>
+          <td><a class="user-link" href="https://www.instagram.com/{{ item.comment.username|cut:'@' }}/" target="_blank" rel="noopener">{% if item.comment.display_name and item.comment.display_name != item.comment.username %}{{ item.comment.display_name }}{% else %}{{ item.comment.username }}{% endif %}</a>{% if item.comment.display_name and item.comment.display_name != item.comment.username %}<div class="cell-muted">{{ item.comment.username }}</div>{% endif %}</td>
           <td><div class="comment-text">“{{ item.comment.text_original }}”</div><a class="cell-link" href="{{ item.comment.publication.permalink }}" target="_blank" rel="noopener">Abrir publicacao <i class="bi bi-box-arrow-up-right"></i></a></td>
           <td><div class="fw-semibold">{{ item.comment.publication.property_type|default:"Imovel anunciado" }}</div><div class="cell-muted">{{ item.comment.publication.property_region|default:"Regiao nao informada" }}</div></td>
           <td>{{ item.comment.publication.profile.handle }}</td>

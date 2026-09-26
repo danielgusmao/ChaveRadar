@@ -1,0 +1,68 @@
+{% extends 'accounts/auth_base.html' %}
+{% block title %}Cadastro | ChaveRadar{% endblock %}
+{% block auth_content %}
+<div class="auth-heading">
+  <span class="section-kicker">Novo acesso</span>
+  <h2>Solicitar cadastro</h2>
+  <p>Seu acesso so sera liberado depois da aprovacao de um administrador.</p>
+</div>
+
+<form method="post" novalidate class="auth-form">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger py-2">{{ form.non_field_errors|join:' ' }}</div>
+  {% endif %}
+
+  <div class="row g-3">
+    <div class="col-sm-6">
+      <label class="form-label" for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+      {{ form.first_name }}
+      {% for error in form.first_name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="col-sm-6">
+      <label class="form-label" for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+      {{ form.last_name }}
+      {% for error in form.last_name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+    </div>
+  </div>
+
+  <div>
+    <label class="form-label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+    {{ form.email }}
+    {% for error in form.email.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+  </div>
+
+  <div>
+    <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+    {{ form.username }}
+    {% if form.username.help_text %}<div class="form-help">{{ form.username.help_text|safe }}</div>{% endif %}
+    {% for error in form.username.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+  </div>
+
+  <div>
+    <label class="form-label" for="{{ form.password1.id_for_label }}">Senha</label>
+    {{ form.password1 }}
+    {% if form.password1.help_text %}<div class="form-help">{{ form.password1.help_text|safe }}</div>{% endif %}
+    {% for error in form.password1.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+  </div>
+
+  <div>
+    <label class="form-label" for="{{ form.password2.id_for_label }}">Confirmar senha</label>
+    {{ form.password2 }}
+    {% for error in form.password2.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+  </div>
+
+  <div class="approval-note">
+    <i class="bi bi-shield-check"></i>
+    <div><strong>Aprovacao obrigatoria</strong><span>O cadastro fica bloqueado ate um administrador liberar o acesso.</span></div>
+  </div>
+
+  <button class="btn btn-brand w-100 auth-submit" type="submit">
+    <i class="bi bi-person-plus"></i> Enviar solicitacao
+  </button>
+</form>
+
+<div class="auth-footer-copy">
+  Ja possui acesso? <a href="{% url 'login' %}">Entrar</a>
+</div>
+{% endblock %}

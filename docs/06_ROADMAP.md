@@ -12,6 +12,7 @@
 8. Criar tela de revisão.
 9. Criar dashboard e filtros.
 10. Exportar Excel.
+11. Autenticacao basica, cadastro e aprovacao administrativa. **Implementado na v0.2.3.**
 
 ## MVP 2
 
@@ -24,6 +25,6 @@
 
 1. Webhooks quando houver infraestrutura adequada.
 2. Provedor licenciado para fontes adicionais.
-3. Autenticacao/permissões completas.
+3. Evoluir autenticacao para papeis/permissoes granulares, recuperacao de senha e auditoria completa.
 4. Integracao CRM.
 5. PWA completa e, se necessário, app Android nativo.

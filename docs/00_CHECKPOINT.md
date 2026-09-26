@@ -1,3 +1,108 @@
+# Atualizacao - 2026-09-26 - v0.2.3 autenticacao e aprovacao administrativa
+
+- Nova decisao: o ChaveRadar passa a exigir **login** para todas as telas operacionais (Dashboard, Leads, Perfis, Importacao, Revisao e Exportacao).
+- Criado fluxo de **cadastro publico com aprovacao obrigatoria**: novo usuario e criado com `is_active=False` e nao consegue entrar antes da liberacao.
+- Criado app `accounts` com modelo `UserApproval` para registrar status `pending/approved/rejected`, data da solicitacao, data da revisao e administrador responsavel.
+- Criadas telas `/entrar/`, `/cadastro/`, `/cadastro/aguardando/` e, para administradores, `/usuarios/pendentes/`.
+- Administradores (`is_staff=True`) podem aprovar ou rejeitar cadastros diretamente pela interface do ChaveRadar; o Django Admin continua disponivel em `/admin/`.
+- A aprovacao ativa o usuario; a rejeicao mantem a conta inativa.
+- Habilitados validadores de senha do Django e cookies seguros em producao.
+- Criado comando `python manage.py bootstrap_admin` para criar o primeiro superusuario no Render usando variaveis secretas de ambiente, sem redefinir senha em deploys futuros.
+- Variaveis previstas no Render: `CHAVERADAR_ADMIN_USERNAME`, `CHAVERADAR_ADMIN_EMAIL` e `CHAVERADAR_ADMIN_PASSWORD`. Nunca registrar valores reais no GitHub ou docs.
+- Build Command recomendado no primeiro deploy da v0.2.3: `pip install -r requirements.txt && python manage.py migrate && python manage.py bootstrap_admin && python manage.py collectstatic --noinput`.
+- Corrigido o rodape para usar automaticamente a versao do arquivo `VERSION` e diferenciar ambiente `Local`/`Online`; remove a exibicao fixa `MVP local / v0.2.0`.
+- Interface passa a mostrar usuario autenticado, menu de sair e atalho de administracao para staff.
+- Documento tematico criado: `docs/11_AUTENTICACAO_APROVACAO.md`.
+- Regra permanente mantida: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+- Proximo passo operacional: validar localmente `migrate` + `check`; depois configurar as 3 variaveis de bootstrap no Render **antes do push**, atualizar o Build Command e somente entao publicar a v0.2.3.
+
+---
+# Atualizacao - 2026-09-26 - Aprendizado por revisao humana definido
+
+- Teste do botao `Confirmar` na tela Revisao concluido com sucesso: o lead `@cliente_exemplo` foi aprovado, saiu da fila e a contagem caiu de 26 para 25.
+- A revisao humana passa a ser tratada como **feedback supervisionado** do sistema. Cada acao `Confirmar` ou `Nao e lead` deve ficar registrada no banco para medir acertos/erros do classificador.
+- Decisao de arquitetura: o ChaveRadar **nao vai "treinar uma IA" automaticamente a cada clique**. Primeiro, o sistema acumula historico de revisoes e usa esse historico para ajustar regras, limiares de confianca e prompts.
+- Evolucao prevista do classificador: regras deterministicas para casos obvios -> IA semantica para casos ambiguos -> decisao final auditavel -> revisao humana -> feedback armazenado.
+- O feedback humano devera registrar pelo menos: classificacao sugerida, decisao humana, nivel final, intencoes finais, data da revisao e versao do classificador.
+- Quando houver volume suficiente de revisoes, considerar aprendizado supervisionado/fine-tuning apenas se trouxer ganho real; para o MVP, preferir prompt + regras + exemplos revisados, que e mais simples, barato e auditavel.
+- Proxima versao deve corrigir o rodape `MVP local / v0.2.0`, evitar handle duplicado quando nome e handle forem iguais e preparar os campos de auditoria de revisao.
+- Regra permanente: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+
+---
+# Atualizacao - 2026-09-26 - Tela Revisao validada com 26 leads
+
+- A tela `Revisao` foi validada no ambiente online `https://chaveradar.onrender.com/revisao/`.
+- A fila mostra **26 leads aguardando validacao**, incluindo os 2 registros importados recentemente.
+- Exemplos confirmados na tela: `@comprador_exemplo` classificado como Medio por `CONDOMINIUM`/`PRICE` com confianca 0,91; `@cliente_exemplo` classificado como Alto por `AVAILABILITY` com confianca 0,96.
+- As classificacoes dos 24 registros anteriores tambem continuam visiveis, preservando intencao, nivel e confianca.
+- Pontos de UX observados para proxima versao: evitar repetir handle duas vezes quando `display_name == handle`; revisar texto/acentuacao visual; confirmar comportamento real dos botoes `Confirmar` e `Nao e lead`.
+- Proximo teste funcional: confirmar um lead na fila e verificar se ele sai da fila e se a contagem reduz; depois testar a acao `Nao e lead`.
+- Regra permanente: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+
+---
+# Atualizacao - 2026-09-26 - Importacao real validada no ambiente online
+
+- Teste da tela **Importar comentarios** concluido no ChaveRadar publicado no Render.
+- O arquivo de modelo foi processado com sucesso: **2 novos**, **0 duplicados**, **0 invalidos**.
+- A tela **Leads** passou de 24 para **26 registros**, confirmando que os 2 novos comentarios foram persistidos no PostgreSQL/Supabase.
+- Os novos registros aparecem corretamente com perfil de origem `@imobiliaria_exemplo`, contexto do imovel/regiao e niveis de qualificacao.
+- Observacao visual pendente: sidebar ainda exibe `MVP local` e `v0.2.0`; corrigir em uma proxima versao.
+- Proximo passo: validar a tela **Revisao** para confirmar que os 2 novos registros aparecem no fluxo de revisao humana e que as classificacoes estao coerentes.
+
+---
+# Atualizacao - 2026-09-26 - Importacao CSV validada em producao
+
+- Importacao manual testada no ChaveRadar publicado no Render.
+- Arquivo CSV de modelo foi processado com sucesso.
+- Resultado exibido pela interface: **2 novos**, **0 duplicados**, **0 invalidos**.
+- O fluxo de importacao esta gravando no PostgreSQL/Supabase e a interface confirmou `Importacao concluida.`
+- Observacao visual: o rodape lateral ainda exibe `MVP local` e versao `v0.2.0`, embora a versao implantada seja v0.2.2; corrigir em uma proxima versao.
+- Proximo teste: abrir `Leads` e `Revisao` para confirmar que os 2 novos registros foram classificados e aparecem no fluxo de revisao.
+- Regra permanente: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+
+---
+# Atualizacao - 2026-09-26 - Persistencia PostgreSQL confirmada apos redeploy
+
+- O Build Command do Render foi alterado para remover `python manage.py seed_demo`; o seed de demonstracao passa a ser somente ferramenta manual de desenvolvimento/teste.
+- Um novo deploy foi concluido com sucesso no Render sem executar o seed.
+- Apos o redeploy, o Supabase Table Editor continuou mostrando **24 registros** em `leads_comment`.
+- Isso comprova que os dados do ChaveRadar estao persistindo no PostgreSQL/Supabase e nao dependem do filesystem temporario do Render.
+- As classificacoes em `leads_classification` ja haviam sido confirmadas no PostgreSQL.
+- Proximo passo aprovado: testar o fluxo real do MVP de ponta a ponta: importacao manual -> classificacao -> revisao -> persistencia -> dashboard/exportacao.
+- Regra permanente: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+
+---
+# Atualizacao - 2026-09-26 - Persistencia PostgreSQL confirmada apos novo deploy
+
+- Build Command do Render foi atualizado para remover `python manage.py seed_demo` do fluxo de producao.
+- Novo deploy foi executado automaticamente apos a alteracao do Build Command e concluiu com `Deploy succeeded | Live`.
+- Fonte do deploy permaneceu no commit `b39f4b5` da v0.2.2; o gatilho exibido foi `Build command updated`.
+- Os 24 comentarios e respectivas classificacoes ja haviam sido confirmados no Supabase antes deste deploy. Como `seed_demo` nao foi executado novamente, o proximo passo e confirmar que os 24 registros permanecem no Supabase; isso validara definitivamente a persistencia do PostgreSQL entre deploys.
+- `seed_demo` passa a ser considerado ferramenta manual de desenvolvimento/teste e nao deve fazer parte do Build Command de producao.
+- Regra permanente mantida: toda versao entregue deve incluir `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+
+---
+# Atualizacao - 2026-09-26 - PostgreSQL Supabase validado no Table Editor
+
+- Deploy da v0.2.2 no Render concluido com sucesso e status `Deploy succeeded | Live`.
+- Conexao `DATABASE_URL` com o Supabase Session pooler foi aceita pelo Django; as migrations foram aplicadas com sucesso.
+- No Supabase Table Editor foram confirmadas as tabelas do Django e do dominio ChaveRadar, incluindo `leads_profile`, `leads_publication`, `leads_comment`, `leads_classification` e `leads_collectionrun`.
+- Isso confirma que o schema do ChaveRadar esta persistido no PostgreSQL do Supabase, e nao apenas no SQLite temporario do Render.
+- Proximo passo: validar os dados de demonstracao no PostgreSQL, conferindo registros em `leads_comment` e `leads_classification`; depois testar persistencia atraves de um novo deploy sem executar mudancas no banco.
+- Regra permanente: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+
+---
+# Atualizacao - 2026-09-26 - v0.2.2 enviada ao GitHub
+
+- Regra permanente: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.
+- Commit da v0.2.2 concluido localmente: `b39f4b5` - `ChaveRadar v0.2.2 - adiciona PostgreSQL Supabase`.
+- `git status` ficou limpo antes do envio.
+- Push concluido com sucesso para `https://github.com/danielgusmao/ChaveRadar.git`, branch `main` (`0d5473b..b39f4b5`).
+- A v0.2.2 publicada no GitHub contem suporte a `DATABASE_URL`, `dj-database-url`, `psycopg[binary]`, documentacao do Supabase e checkpoint cumulativo.
+- Proximo passo: no Render, adicionar a variavel de ambiente `DATABASE_URL` usando a URI do **Supabase Session pooler** (porta 5432), sem expor a senha em chat/GitHub; depois salvar e acompanhar o novo deploy.
+- A URI deve permanecer somente como segredo no Render; nunca registrar em arquivos versionados.
+
+---
 # Atualizacao - 2026-09-26 - Supabase PostgreSQL preparado (v0.2.2)
 
 - Regra permanente: toda versao entregue deve conter `docs/00_CHECKPOINT.md` atualizado dentro do pacote.

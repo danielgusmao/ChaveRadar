@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios | ChaveRadar{% endblock %}
+{% block page_name %}Usuarios{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div>
+    <span class="section-kicker">Administracao de acesso</span>
+    <h1>Cadastros pendentes</h1>
+    <p>Apenas administradores podem liberar novos usuarios.</p>
+  </div>
+</div>
+
+<div class="metric-grid mb-4 admin-metrics">
+  <div class="metric-card highlight"><div class="metric-icon"><i class="bi bi-hourglass-split"></i></div><div><span class="metric-label">Pendentes</span><strong>{{ pending_count }}</strong></div></div>
+  <div class="metric-card"><div class="metric-icon"><i class="bi bi-person-check"></i></div><div><span class="metric-label">Aprovados</span><strong>{{ approved_count }}</strong></div></div>
+  <div class="metric-card"><div class="metric-icon"><i class="bi bi-person-x"></i></div><div><span class="metric-label">Rejeitados</span><strong>{{ rejected_count }}</strong></div></div>
+</div>
+
+<div class="panel p-0 overflow-hidden">
+  {% if pending_users %}
+    <div class="table-responsive">
+      <table class="table app-table align-middle mb-0">
+        <thead>
+          <tr><th>Usuario</th><th>E-mail</th><th>Solicitado em</th><th class="text-end">Acao</th></tr>
+        </thead>
+        <tbody>
+          {% for approval in pending_users %}
+          <tr>
+            <td>
+              <strong>{{ approval.user.get_full_name|default:approval.user.username }}</strong>
+              <div class="cell-muted">@{{ approval.user.username }}</div>
+            </td>
+            <td>{{ approval.user.email }}</td>
+            <td>{{ approval.requested_at|date:'d/m/Y H:i' }}</td>
+            <td>
+              <div class="d-flex justify-content-end gap-2 flex-wrap">
+                <form method="post" action="{% url 'approval_action' approval.id 'reject' %}">
+                  {% csrf_token %}
+                  <button class="btn btn-outline-secondary btn-sm" type="submit"><i class="bi bi-x-lg"></i> Rejeitar</button>
+                </form>
+                <form method="post" action="{% url 'approval_action' approval.id 'approve' %}">
+                  {% csrf_token %}
+                  <button class="btn btn-brand btn-sm" type="submit"><i class="bi bi-check-lg"></i> Aprovar</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-person-check"></i>
+      <h3>Nenhum cadastro aguardando aprovacao</h3>
+      <p>Novas solicitacoes aparecerao aqui automaticamente.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

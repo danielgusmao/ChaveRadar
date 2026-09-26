@@ -4,6 +4,7 @@ import io
 from datetime import datetime
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -24,6 +25,7 @@ def _lead_queryset():
     )
 
 
+@login_required
 def dashboard(request):
     leads = _lead_queryset()
     context = {
@@ -52,6 +54,7 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 
+@login_required
 def leads_list(request):
     queryset = _lead_queryset()
     level = request.GET.get('nivel', '').strip()
@@ -82,6 +85,7 @@ def leads_list(request):
     return render(request, 'leads.html', context)
 
 
+@login_required
 def profiles_list(request):
     profiles = Profile.objects.annotate(
         publication_count=Count('publications', distinct=True),
@@ -95,11 +99,13 @@ def profiles_list(request):
     return render(request, 'profiles.html', {'profiles_list': profiles})
 
 
+@login_required
 def review_list(request):
     items = _lead_queryset().filter(review_status='pending')
     return render(request, 'review.html', {'items': items, 'total': items.count()})
 
 
+@login_required
 def review_action(request, classification_id, action):
     if request.method != 'POST':
         return redirect('review')
@@ -116,6 +122,7 @@ def review_action(request, classification_id, action):
     return redirect('review')
 
 
+@login_required
 def import_comments(request):
     form = ImportCommentsForm(request.POST or None, request.FILES or None)
     summary = None
@@ -207,6 +214,7 @@ def import_comments(request):
     return render(request, 'import.html', {'form': form, 'summary': summary})
 
 
+@login_required
 def export_excel(request):
     workbook = Workbook()
     sheet = workbook.active
